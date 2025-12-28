@@ -1,0 +1,33 @@
+svg{
+    position:  relative;
+    height: 150px;
+    width: 150px;
+    animation: rotate 2s linear infinite;
+}
+
+svg circle {
+    fill: none;
+    stroke-width: 10;
+    stroke: black;
+    stroke-linecap: round;
+    stroke-dasharray: 440;
+    stroke-dashoffset: 440;
+    animation: animate 4s linear infinite;
+    /*transform: translate(-50%, -50%);*/
+}
+@keyframes rotate {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+@keyframes animate {
+    0%, 100% {
+        stroke-dashoffset: 440;
+        /*stroke-dasharray: 440;*/
+    }
+    50% {
+        stroke-dashoffset: 0;
+    }
+    50.1%{
+        stroke-dashoffset: 880;
+    }
+}

@@ -10,7 +10,7 @@
 
 .app .main-container{
   height: 90%;
-  max-height: 700px;
+  max-height: 1000px;
   background: var(--bs-gray-400);
 }
 .first-bloc .upload-bt {

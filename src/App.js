@@ -10,11 +10,11 @@ function App() {
   const [fileURL, setFileURL] = useState("");
   const [receiveFile, setReceiveFile] = useState(null);
   
-  const fileInputRef = useRef();
+  // const fileInputRef = useRef();
   const inputFileRef = useRef();
 
-  const [fileValue, setFileValue] = useState(null);
-
+  // const [fileValue, setFileValue] = useState(null);
+  const [replaceText, setReplaceText] = useState("");
   const [loading, setLoading] = useState(false);
   const [textValue, setTextValue] = useState("");
 
@@ -26,7 +26,7 @@ function App() {
   const pickFile = (event)=>{
     const file = event.target.files[0];
     console.log(file.type);
-    if(file.type.startsWith("image/")) {
+    if(!file.type.startsWith("image/")) {
       alert("Please Select an Image File ");
     } else {
       setFileURL(URL.createObjectURL(event.target.files[0]));
@@ -35,7 +35,7 @@ function App() {
     }
 
   };
-  const cancelSelectFile = ()=>{setFile(null);setFileURL("");};
+  const cancelSelectFile = ()=>{setFile(null); setFileURL("");};
 
   // send selected file --------------------------------------------------
   const sendFile = async (event)=>{
@@ -48,7 +48,7 @@ function App() {
         return;
       }
 
-      const response = await axios.post("https://jovialsoh-apiocr.hf.space/uploadfile", {file: file}, {
+      const response = await axios.post("https://jovialsoh-apiocr.hf.space/uploadfile", {workFile: file, replaceName: replaceText}, {
         headers: {
           "Content-Type": "multipart/form-data"
         }, 
@@ -81,9 +81,9 @@ function App() {
   return (
     <div className="app">
       <h1 className="fs-1 fw-bold"> Text Erase </h1>
-      <div className="container rounded-2 main-container">
+      <div className="container rounded-2 px-3 main-container">
         <div className="row h-100 py-2">
-          <div className="col-6 first-bloc d-flex align-items-center flex-column justify-content-center gap-2">
+          <div className="col col-12 col-md-6 col-sm-12 col-md-6 first-bloc d-flex align-items-center flex-column justify-content-center gap-2">
             {fileURL ? (
               <div className="h-100 w-100 position-relative bg-primary">
                 <img src={fileURL} alt={"upload-image"} height={"100%"} width={"100%"} className="position-absolute top-0 start-0"/>
@@ -96,11 +96,9 @@ function App() {
             <button className="btn w-100 send-bt" onClick={sendFile}> Erase Text</button>
           </div>
 
-          <div className="col-6 second-bloc d-flex flex-column justify-content-center gap-3">
+          <div className="col col-12 col-md-6 col-sm-12 second-bloc d-flex flex-column justify-content-center gap-3">
             <div className="replace-text-or-image d-flex justify-content-between align-items-center">
-              <input type={"text"} placeholder={"Enter the replace text"}/>
-              <span> or </span>
-              <button className="btn btn-primary"> Select Change Image </button> 
+              <input type={"text"} placeholder={"Enter the replace text"} name={"replaceText"} onChange={(e)=>setReplaceText(e.target.value)} value={replaceText} className={"form-control"}/>
             </div>
 
             <div className="ouput-text-bloc h-25 d-flex flex-column">

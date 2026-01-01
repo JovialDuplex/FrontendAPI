@@ -16,13 +16,24 @@ function App() {
   const [fileValue, setFileValue] = useState(null);
 
   const [loading, setLoading] = useState(false);
+  const [textValue, setTextValue] = useState("");
+
+  // change text value -----------------------------
+  const changeTextValue = (event)=>{setTextValue(event.target.value);};
 
   // open file picker and select file ---------------------------------------
   const openFilePicker = ()=>{inputFileRef.current.click();};
   const pickFile = (event)=>{
-    setFileURL(URL.createObjectURL(event.target.files[0]));
-    setFile(event.target.files[0]);
-    console.log(event.target.files[0]);
+    const file = event.target.files[0];
+    console.log(file.type);
+    if(file.type.startsWith("image/")) {
+      alert("Please Select an Image File ");
+    } else {
+      setFileURL(URL.createObjectURL(event.target.files[0]));
+      setFile(event.target.files[0]);
+      console.log(event.target.files[0]);
+    }
+
   };
   const cancelSelectFile = ()=>{setFile(null);setFileURL("");};
 
@@ -37,7 +48,7 @@ function App() {
         return;
       }
 
-      const response = await axios.post("http://localhost:8001/uploadfile", {file: file}, {
+      const response = await axios.post("https://jovialsoh-apiocr.hf.space/uploadfile", {file: file}, {
         headers: {
           "Content-Type": "multipart/form-data"
         }, 
@@ -49,16 +60,16 @@ function App() {
       setReceiveFile(urlFile);
 
       const headers = JSON.parse(response.headers["image-data"]);
+      var outputText = "";
 
-      // const response = await axios.post("http://localhost:8001/uploadfile", {file, file}, {
-      //   headers : {
-      //     "Content-Type" : "multipart/form-data"
-      //   }
-      // });
-
-
-      // console.log(`see the headers of response: ${response.headers["data-image"]}`);
-
+      headers.forEach(value=>{
+        outputText += `pos=(${value.x}, ${value.y}) text=${value.text} \n`;
+      });
+      
+      console.log(headers);
+      console.log(outputText);
+      setTextValue(outputText);
+      
     } catch(error) {
       console.error("Error uploading file:", error);
     } finally {
@@ -86,9 +97,15 @@ function App() {
           </div>
 
           <div className="col-6 second-bloc d-flex flex-column justify-content-center gap-3">
+            <div className="replace-text-or-image d-flex justify-content-between align-items-center">
+              <input type={"text"} placeholder={"Enter the replace text"}/>
+              <span> or </span>
+              <button className="btn btn-primary"> Select Change Image </button> 
+            </div>
+
             <div className="ouput-text-bloc h-25 d-flex flex-column">
               <label htmlFor="output-text" className="form-label"> Output Text </label>
-              { loading ? <Spinner /> :   <textarea className="form-control flex-grow-1" id="output-text"/>}
+              { loading ? <Spinner /> :   <textarea className="form-control flex-grow-1" value={textValue} onChange={changeTextValue} id="output-text"/>}
             </div>
 
             <div className="output-image-bloc d-flex flex-column h-75 rounded-2">
